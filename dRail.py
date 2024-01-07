@@ -3,16 +3,24 @@ import json
 
 ROOT_URL= "https://api.irail.be/"
 
-def query_irail(what_to_query,response_format,response_lang):
-    # PAPERLESS CONSTANTS
-    API_URL = ROOT_URL + what_to_query
+def query_stations(response_format,response_lang):
     
-    # Make a GET request to the API to retrieve documents with the specific tag
+    API_URL = ROOT_URL + "stations"
+    
     query_result = requests.get(API_URL, params={'format': response_format, 'lang': response_lang})
 
     return(query_result)
 
-stations = (query_irail("stations", "json", "fr")).json()
+def query_liveboard(what_to_query,response_format,response_lang,alerts_bool):
+    
+    API_URL = ROOT_URL + "liveboard"
+    
+    query_result = requests.get(API_URL, params={'station': what_to_query, 'format': response_format, 'lang': response_lang, 'alerts': alerts_bool})
 
-for id in stations['station']:
-        print(id['name'])
+    return(query_result)
+
+live_station = "Ath"
+liveboard = (query_liveboard(live_station, "json", "fr", "true")).json()
+
+for key, value in liveboard.items():
+    print(key, ":", value)
