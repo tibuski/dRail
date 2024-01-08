@@ -1,4 +1,3 @@
-
 import pytz
 import requests
 from datetime import datetime, timedelta
@@ -6,37 +5,47 @@ from datetime import datetime, timedelta
 ROOT_URL = "https://api.irail.be/"
 TZ = pytz.timezone('Europe/Brussels')
 
-liveboardStation = "Schaerbeek"
+liveboard_station = "Schaerbeek"
+liveboard_time = datetime.now(TZ) + timedelta(minutes=30)
 
-# Current time + 30 minutes
-liveboardTime = (datetime.now() + timedelta(minutes=30)).strftime("%H%M")
-
-def query_liveboard(what_to_query,response_format,response_lang,alerts_bool,time_to_query):
-    api_url = ROOT_URL + "liveboard"
-    query_result = requests.get(
-        api_url,
-        params={
-            'station': what_to_query, 
-            'format': response_format, 
-            'lang': response_lang, 
-            'alerts': alerts_bool,
-            'time': time_to_query
-            }
-        )
-    return(query_result)
-
-# API Request
-liveboard = (query_liveboard(liveboardStation, "json", "en", "true", liveboardTime)).json()
-
-print(f"{'Time (Delay)' :<22} {'Station' :<25} {'Platform' :<}")
-print("===========================================================")
-
-departures = liveboard['departures']
-for idx in departures['departure']:
+def query_liveboard(station, response_format, lang, alerts, time):
+    """
+    Query the liveboard API for train departure information.
     
-    departureTime = datetime.fromtimestamp(int(idx['time']),tz=TZ)
-    departureDelay = "(+"+str(round(int((idx['delay']))/60))+")"
-    departurePlatform = idx['platform']
+    :param station: The station to query.
+    :param response_format: The response format (e.g., 'json').
+    :param lang: The response language.
+    :param alerts: Whether to include alerts.
+    :param time: The time to query for.
+    :return: The API response.
+    """
+    api_url = f"{ROOT_URL}liveboard"
+    try:
+        response = requests.get(api_url, params={
+            'station': station, 
+            'format': response_format, 
+            'lang': lang, 
+            'alerts': alerts,
+            'time': time.strftime("%H%M")
+        })
+        response.raise_for_status()
+        return response.json()
+    except requests.RequestException as e:
+        print(f"Error querying the liveboard API: {e}")
+        return None
 
-    print(f"{departureTime.strftime('%H:%M')} {departureDelay:<15}  {idx['station']:<25} {departurePlatform:>6}")
-print("===========================================================")
+liveboard = query_liveboard(liveboard_station, "json", "en", "true", liveboard_time)
+
+if liveboard:
+    print(f"{'Time (Delay)':<22} {'Station':<25} {'Platform':<}")
+    print("===========================================================")
+
+    departures = liveboard['departures']
+    for departure in departures['departure']:
+        departure_time = datetime.fromtimestamp(int(departure['time']), tz=TZ)
+        departure_delay = f"(+{int(departure['delay']) // 60})"
+        departure_platform = departure['platform']
+
+        print(f"{departure_time.strftime('%H:%M')} {departure_delay:<15}  {departure['station']:<25} {departure_platform:>6}")
+
+    print("===========================================================")
