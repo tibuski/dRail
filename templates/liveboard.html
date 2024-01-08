@@ -41,7 +41,7 @@
         </tr>
         {% for departure in departures %}
         <tr class="{{ 'delayed' if departure['delay']|int > 0 else '' }}">
-            <td>{{ departure['time'] | format_time }} ({{ departure['delay']/60 }})</td>
+            <td>{{ departure['time'] | format_time }} {% if departure['delay']|int > 0 %} (+{{ departure['delay']|int // 60 }} min) {% endif %}</td>
             <td>{{ departure['station'] }}</td>
             <td>{{ departure['platform'] }}</td>
         </tr>
