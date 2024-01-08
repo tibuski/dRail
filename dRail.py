@@ -6,6 +6,11 @@ from datetime import datetime, timedelta
 ROOT_URL = "https://api.irail.be/"
 TZ = pytz.timezone('Europe/Brussels')
 
+liveboardStation = "Schaerbeek"
+
+# Current time + 30 minutes
+liveboardTime = (datetime.now() + timedelta(minutes=30)).strftime("%H%M")
+
 def query_liveboard(what_to_query,response_format,response_lang,alerts_bool,time_to_query):
     
     API_URL = ROOT_URL + "liveboard"
@@ -23,17 +28,13 @@ def query_liveboard(what_to_query,response_format,response_lang,alerts_bool,time
 
     return(query_result)
 
-live_station = "Schaerbeek"
-# Current time + 30 minutes
-liveboardTime = (datetime.now() + timedelta(minutes=30)).strftime("%H%M")
-
-liveboard = (query_liveboard(live_station, "json", "en", "true", liveboardTime)).json()
-departures = liveboard['departures']
-
+# API Request
+liveboard = (query_liveboard(liveboardStation, "json", "en", "true", liveboardTime)).json()
 
 print(f"{'Time (Delay)' :<22} {'Station' :<25} {'Platform' :<}")
 print("===========================================================")
 
+departures = liveboard['departures']
 for idx in departures['departure']:
     
     departureTime = datetime.fromtimestamp(int(idx['time']),tz=TZ)
