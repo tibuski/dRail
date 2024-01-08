@@ -12,11 +12,9 @@ liveboardStation = "Schaerbeek"
 liveboardTime = (datetime.now() + timedelta(minutes=30)).strftime("%H%M")
 
 def query_liveboard(what_to_query,response_format,response_lang,alerts_bool,time_to_query):
-    
-    API_URL = ROOT_URL + "liveboard"
-    
+    api_url = ROOT_URL + "liveboard"
     query_result = requests.get(
-        API_URL,
+        api_url,
         params={
             'station': what_to_query, 
             'format': response_format, 
@@ -25,7 +23,6 @@ def query_liveboard(what_to_query,response_format,response_lang,alerts_bool,time
             'time': time_to_query
             }
         )
-
     return(query_result)
 
 # API Request
