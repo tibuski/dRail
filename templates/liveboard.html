@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Liveboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .delayed {
+            color: red;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 5px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h1>Liveboard Departures</h1>
+
+    <form action="/" method="post">
+        <label for="station">Enter Station:</label>
+        <input type="text" id="station" name="station" placeholder="Station name">
+        <input type="submit" value="Get Departures">
+    </form>
+
+    <h2>Departures from {{ station }}</h2>
+    <table>
+        <tr>
+            <th>Time (Delay)</th>
+            <th>Station</th>
+            <th>Platform</th>
+        </tr>
+        {% for departure in departures %}
+        <tr class="{{ 'delayed' if departure['delay']|int > 0 else '' }}">
+            <td>{{ departure['time'] | format_time }} ({{ departure['delay']/60 }})</td>
+            <td>{{ departure['station'] }}</td>
+            <td>{{ departure['platform'] }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>

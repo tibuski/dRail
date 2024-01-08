@@ -1,12 +1,12 @@
+from flask import Flask, render_template, request
 import pytz
 import requests
 from datetime import datetime, timedelta
 
+app = Flask(__name__)
+
 ROOT_URL = "https://api.irail.be/"
 TZ = pytz.timezone('Europe/Brussels')
-
-liveboard_station = "Schaerbeek"
-liveboard_time = datetime.now(TZ) + timedelta(minutes=30)
 
 def query_liveboard(station, response_format, lang, alerts, time):
     """
@@ -34,18 +34,30 @@ def query_liveboard(station, response_format, lang, alerts, time):
         print(f"Error querying the liveboard API: {e}")
         return None
 
-liveboard = query_liveboard(liveboard_station, "json", "en", "true", liveboard_time)
+@app.template_filter('format_time')
+def format_time(timestamp):
+    """
+    Format a UNIX timestamp into a human-readable format.
+    
+    :param timestamp: The UNIX timestamp.
+    :return: Formatted time string.
+    """
+    return datetime.fromtimestamp(int(timestamp), tz=TZ).strftime('%H:%M')
 
-if liveboard:
-    print(f"{'Time (Delay)':<22} {'Station':<25} {'Platform':<}")
-    print("===========================================================")
+@app.route('/', methods=['GET', 'POST'])
+def index():
+    if request.method == 'POST':
+        liveboard_station = request.form.get('station')
+    else:
+        liveboard_station = "Schaerbeek"  # Default station
 
-    departures = liveboard['departures']
-    for departure in departures['departure']:
-        departure_time = datetime.fromtimestamp(int(departure['time']), tz=TZ)
-        departure_delay = f"(+{int(departure['delay']) // 60})"
-        departure_platform = departure['platform']
+    liveboard_time = datetime.now(TZ) + timedelta(minutes=30)
+    liveboard = query_liveboard(liveboard_station, "json", "en", "true", liveboard_time)
 
-        print(f"{departure_time.strftime('%H:%M')} {departure_delay:<15}  {departure['station']:<25} {departure_platform:>6}")
+    if liveboard:
+        return render_template('liveboard.html', departures=liveboard['departures']['departure'], station=liveboard_station)
+    else:
+        return "<p>Error fetching liveboard data.</p>"
 
-    print("===========================================================")
+if __name__ == '__main__':
+    app.run(debug=True)
