@@ -22,5 +22,6 @@ def query_liveboard(what_to_query,response_format,response_lang,alerts_bool):
 live_station = "Ath"
 liveboard = (query_liveboard(live_station, "json", "fr", "true")).json()
 
-for key, value in liveboard.items():
-    print(key, ":", value)
+for departure in liveboard['departures']:
+    for idx in departure.len():
+        print(departure[idx])
