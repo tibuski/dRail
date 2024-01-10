@@ -67,32 +67,42 @@ def text_liveboard(station):
     if liveboard and 'departures' in liveboard and 'departure' in liveboard['departures']:
         departures = liveboard['departures']['departure']
 
-        # Determine the maximum width of each column
-        max_station_length = max(len(d['stationinfo']['name']) for d in departures)
-        max_platform_length = max(len(d['platform']) for d in departures)
+        # Calculate the maximum length for the station column
+        max_station_length = int(max(len(d['stationinfo']['name']) for d in departures))+6
+        platform_length = 8 # Fixed width for platform column
+        delay_column_width = 3  # Fixed width for delay column
+        time_column_lenght = 9  # Fixed width for time column
+        print(max_station_length, platform_length)
 
-        response_text = f"Liveboard Departures from {station.title()}:\n\n"
-        header = f"{'Time (Delay)':15} {'Station':<{max_station_length}} {'Platform':^{max_platform_length}}\n"
+        response_text = f"\n\nLiveboard Departures from {station.title()}:\n\n"
+        header = f"{' Time':^{time_column_lenght}}{'Delay':^{delay_column_width}}{'Station':^{max_station_length}}{'Platform':^{platform_length}}\n"
         response_text += header
         response_text += '-' * len(header) + '\n'
 
         # ANSI color code for red
         red_start = "\033[91m"
+        green_start = "\033[92m"
         color_end = "\033[0m"
 
         for d in departures:
             time_str = datetime.fromtimestamp(int(d['time']), tz=TZ).strftime('%H:%M')
-            delay = int(d['delay'])
-            delay_str = f"{red_start}(+{delay // 60}){color_end}" if delay > 0 else ""
-            time_delay_str = f"{time_str} {delay_str}".ljust(15)
-            station_str = d['stationinfo']['name'].ljust(max_station_length)
-            platform_str = d['platform'].center(max_platform_length)
-            response_text += f"{time_delay_str} {station_str} {platform_str}\n"
+            
+            delay = int(d['delay']) // 60
+            delay = f"{delay:>{delay_column_width}}"
+            delay_str = f"{red_start}{delay}{color_end}" if int(delay) > 0 else f"{green_start}{delay}{color_end}"
+                       
+            station_str = d['stationinfo']['name']
+            platform_str = d['platform']
+
+            response_text += f"{time_str:^{time_column_lenght}}{delay_str}{station_str:^{max_station_length}}{platform_str:>{platform_length}}\n"
+
+            print(response_text)
 
         return response_text
     else:
         return "Error or no departures available for this station."
 
+# Rest of the Flask app remains the same...
 
 if __name__ == '__main__':
     app.run(debug=True)
