@@ -5,8 +5,8 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-	    background-color: #040720;
-	    color: white;
+	        background-color: #040720;
+	        color: white;
         }
         .delayed {
             text-align: center;
@@ -46,15 +46,14 @@
     </style>
 </head>
 <body>
-    <h1>Departures in the next 30 minutes</h1>
+    <h1>Departures from <span style="color:yellow">{{ station }}</span> in the next <span style="color:yellow">{{ timedelta }}</span> minutes</h1>
 
     <form action="" method="post">
-        <label for="station">Enter Station:</label>
+        <label for="station">Select other Station:</label>
         <input type="text" id="station" name="station" placeholder="Station name">
         <input type="submit" value="Get Departures">
     </form>
-
-    <h2>Departures from {{ station }}</h2>
+<br><br>
     <table>
         <tr>
             <th>Time (Delay)</th>
@@ -63,7 +62,7 @@
         </tr>
         {% for departure in departures %}
         <tr>
-            <td class="time">{{ departure['time'] | format_time }} {% if departure['delay']|int > 0 %} (<span  style="color:red">+{{ departure['delay']|int // 60 }}</span>) {% endif %}</td>
+            <td class="time">{{ departure['time'] | format_time }} {% if departure['delay']|int > 0 %} (<span style="color:red">+{{ departure['delay']|int // 60 }}</span>) {% endif %}</td>
             <td class="stations">{{ departure['station'] }}</td>
             <td class="platform">{{ departure['platform'] }}</td>
         </tr>

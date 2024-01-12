@@ -7,6 +7,7 @@ app = Flask(__name__)
 
 ROOT_URL = "https://api.irail.be/"
 TZ = pytz.timezone('Europe/Brussels')
+TIME_DELTA = 15
 
 def query_liveboard(station, response_format, lang, alerts, time):
     """
@@ -51,11 +52,11 @@ def index():
     else:
         liveboard_station = "Schaerbeek"  # Default station
 
-    liveboard_time = datetime.now(TZ) + timedelta(minutes=30)
+    liveboard_time = datetime.now(TZ) + timedelta(minutes=TIME_DELTA)
     liveboard = query_liveboard(liveboard_station, "json", "en", "true", liveboard_time)
 
     if liveboard:
-        return render_template('liveboard.html', departures=liveboard['departures']['departure'], station=liveboard_station)
+        return render_template('liveboard.html', departures=liveboard['departures']['departure'], station=liveboard_station, timedelta=TIME_DELTA)
     else:
         return "<p>Error fetching liveboard data.</p>"
     
