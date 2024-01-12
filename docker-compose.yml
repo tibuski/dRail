@@ -1,6 +1,6 @@
 version: '3'
 services:
-  devian:
+  drail:
     build: .
     container_name: dRail
     restart: unless-stopped
@@ -10,8 +10,12 @@ services:
       traefik.http.routers.drail.tls: true
       traefik.http.routers.drail.rule: (Host(`centricity.telinduscloud.lu`) && PathPrefix(`/drail`))
       traefik.http.services.drail.loadbalancer.server.port: 5000
-    
+      traefik.http.middlewares.drail-strip.stripprefix.prefixes: /drail
+      traefik.http.routers.drail.middlewares: drail-strip
+
 networks:
   default:
     name: traefik_network
     external: true
+
+

@@ -11,10 +11,9 @@ WORKDIR /app
 RUN pip install -r requirements.txt
 
 # copy every content from the local file to the image
-COPY dRail.py /app
-COPY templates/ /app
+COPY dRail.py /app/app.py
+COPY templates /app/templates
 
 # configure the container to run in an executed manner
-ENTRYPOINT [ "python" ]
-
-CMD ["dRail.py" ]
+EXPOSE 5000
+CMD [ "flask", "run", "--host=0.0.0.0" ]
