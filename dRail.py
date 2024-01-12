@@ -44,7 +44,7 @@ def format_time(timestamp):
     """
     return datetime.fromtimestamp(int(timestamp), tz=TZ).strftime('%H:%M')
 
-@app.route('/drail', methods=['GET', 'POST'])
+@app.route('/', methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
         liveboard_station = request.form.get('station')
@@ -59,7 +59,7 @@ def index():
     else:
         return "<p>Error fetching liveboard data.</p>"
     
-@app.route('/drail/text/<station>', methods=['GET'])
+@app.route('/text/<station>', methods=['GET'])
 def text_liveboard(station):
     liveboard_time = datetime.now(TZ)
     liveboard = query_liveboard(station, "json", "en", "true", liveboard_time)

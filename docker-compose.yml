@@ -12,7 +12,6 @@ services:
       traefik.http.services.drail.loadbalancer.server.port: 5000
       traefik.http.middlewares.drail-strip.stripprefix.prefixes: /drail
       traefik.http.routers.drail.middlewares: drail-strip
-
 networks:
   default:
     name: traefik_network
