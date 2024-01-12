@@ -11,7 +11,7 @@ WORKDIR /app
 RUN pip install -r requirements.txt
 
 # copy every content from the local file to the image
-COPY drail.py /app
+COPY dRail.py /app
 COPY templates/ /app
 
 # configure the container to run in an executed manner
