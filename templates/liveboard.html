@@ -5,26 +5,47 @@
     <style>
         body {
             font-family: Arial, sans-serif;
+
         }
         .delayed {
+            text-align: center;
             color: red;
+            font-weight: bold;
+        }
+        .time {
+            text-align: center;
+            color: white;
+            font-weight: normal;
+        }
+        .platform {
+            text-align: center;
+            color: white;
+            font-weight: bold;
+        }
+        .stations {
+            font-weight: normal;
         }
         table {
-            width: 100%;
+            width: auto;
             border-collapse: collapse;
         }
         th, td {
             border: 1px solid black;
             padding: 5px;
+            color: yellow;
             text-align: left;
+            background-color: darkblue;
+
         }
         th {
-            background-color: #f2f2f2;
+            background-color: blue;
+            text-align: center;
+            color: white;
         }
     </style>
 </head>
 <body>
-    <h1>Liveboard Departures</h1>
+    <h1>Departures in the next 30 minutes</h1>
 
     <form action="/" method="post">
         <label for="station">Enter Station:</label>
@@ -40,10 +61,10 @@
             <th>Platform</th>
         </tr>
         {% for departure in departures %}
-        <tr class="{{ 'delayed' if departure['delay']|int > 0 else '' }}">
-            <td>{{ departure['time'] | format_time }} {% if departure['delay']|int > 0 %} (+{{ departure['delay']|int // 60 }} min) {% endif %}</td>
-            <td>{{ departure['station'] }}</td>
-            <td>{{ departure['platform'] }}</td>
+        <tr>
+            <td class="time">{{ departure['time'] | format_time }} {% if departure['delay']|int > 0 %} (<span  style="color:red">+{{ departure['delay']|int // 60 }}</span>) {% endif %}</td>
+            <td class="stations">{{ departure['station'] }}</td>
+            <td class="platform">{{ departure['platform'] }}</td>
         </tr>
         {% endfor %}
     </table>
