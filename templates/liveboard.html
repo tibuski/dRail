@@ -66,9 +66,30 @@
         </tr>
         {% for departure in departures %}
         <tr>
-            <td class="time">{% if departure['canceled']|int == 0 %} {{ departure['time'] | format_time }}{% else %}<span class="cancelled">{{ departure['time'] | format_time }}</span> {% endif %} {% if departure['delay']|int > 0 %} (<span style="color:red">+{{ departure['delay']|int // 60 }}</span>) {% endif %}</td>
-            <td class="stations">{% if departure['canceled']|int == 0 %} {{ departure['station'] }} {% else %}<span class="cancelled">{{ departure['station'] }}</span> {% endif %}</td>
-            <td class="platform">{% if departure['canceled']|int == 0 %} {{ departure['platform'] }} {% else %}<span style="color:red">Cancelled</span>  {% endif %}</td>
+            <td class="time">
+                {% if departure['canceled']|int == 0 %} 
+                  {{ departure['time'] | format_time }}
+                {% else %}
+                  <span class="cancelled"> {{ departure['time'] | format_time }} </span> 
+                {% endif %}
+                  {% if departure['delay']|int > 0 %} 
+                    (<span style="color:red">+{{ departure['delay']|int // 60 }}</span>)
+                {% endif %}
+            </td>
+            <td class="stations">
+                {% if departure['canceled']|int == 0 %} 
+                  {{ departure['station'] }} 
+                {% else %}
+                  <span class="cancelled"> {{ departure['station'] }} </span>
+                {% endif %}
+            </td>
+            <td class="platform">
+                {% if departure['canceled']|int == 0 %}
+                  {{ departure['platform'] }}
+                {% else %}
+                  <span style="color:red">Cancelled</span>
+                {% endif %}
+            </td>
         </tr>
         {% endfor %}
     </table>
