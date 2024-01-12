@@ -3,8 +3,6 @@ services:
   devian:
     build: .
     container_name: dRail
-    ports:
-      - 5000:5000
     restart: unless-stopped
     labels:
       traefik.enable: true
