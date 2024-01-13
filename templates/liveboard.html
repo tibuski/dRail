@@ -78,7 +78,7 @@
             </td>
             <td class="stations">
                 {% if departure['canceled']|int == 0 %} 
-                  {{ departure['station'] }} 
+                  {{ departure['station'] }}
                 {% else %}
                   <span class="cancelled"> {{ departure['station'] }} </span>
                 {% endif %}
