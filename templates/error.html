@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Liveboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+	        background-color: #040720;
+	        color: white;
+        }
+        .delayed {
+            text-align: center;
+            color: red;
+            font-weight: bold;
+        }
+        .cancelled {
+            text-decoration: line-through;
+            background-color: red;
+        }
+        .time {
+            text-align: center;
+            color: white;
+            font-weight: normal;
+        }
+        .platform {
+            text-align: center;
+            color: white;
+            font-weight: bold;
+        }
+        .stations {
+            font-weight: normal;
+        }
+        table {
+            width: auto;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 5px;
+            color: yellow;
+            text-align: left;
+            background-color: darkblue;
+
+        }
+        th {
+            background-color: blue;
+            text-align: center;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <h1>Once again SNCB api is not responding with error :</h1>
+    <span style="color:yellow">{{ error }}</span>
+
+<br><br>
+    <table>
+        <tr>
+            <th>Time (Delay)</th>
+            <th>Station</th>
+            <th>Platform</th>
+        </tr>
+
+        <tr>
+            <td class="time">
+                <img src=/static/train1.jpeg>
+            </td>
+            <td class="stations">
+                <img src=/static/train2.jpeg>
+            </td>
+            <td class="platform">
+                <img src=/static/train3.jpeg>
+            </td>
+        </tr>
+
+    </table>
+</body>
+</html>
