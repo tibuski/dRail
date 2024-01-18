@@ -7,7 +7,7 @@ app = Flask(__name__)
 
 ROOT_URL = "https://api.irail.be/"
 TZ = pytz.timezone('Europe/Brussels')
-TIME_DELTA = 15
+TIME_DELTA = 30
 
 def query_liveboard(station, response_format, lang, alerts, time):
     """
@@ -22,7 +22,7 @@ def query_liveboard(station, response_format, lang, alerts, time):
     """
     api_url = f"{ROOT_URL}liveboard"
     try:
-        response = requests.get(api_url, params={
+        response = requests.get(api_url, timeout=5, params={
             'station': station, 
             'format': response_format, 
             'lang': lang, 
@@ -30,10 +30,12 @@ def query_liveboard(station, response_format, lang, alerts, time):
             'time': time.strftime("%H%M")
         })
         response.raise_for_status()
+        print(type(response.json()))
         return response.json()
     except requests.RequestException as e:
         print(f"Error querying the liveboard API: {e}")
-        return None
+        print(type(e))
+        return e
 
 @app.template_filter('format_time')
 def format_time(timestamp):
@@ -55,10 +57,10 @@ def index():
     liveboard_time = datetime.now(TZ) + timedelta(minutes=TIME_DELTA)
     liveboard = query_liveboard(liveboard_station, "json", "en", "true", liveboard_time)
 
-    if liveboard:
+    if type(liveboard) is not requests.exceptions.ConnectionError:
         return render_template('liveboard.html', departures=liveboard['departures']['departure'], station=liveboard_station, timedelta=TIME_DELTA)
     else:
-        return "<p>Error fetching liveboard data.</p>"
+        return render_template('error.html', error=liveboard)
     
 @app.route('/text/<station>', methods=['GET'])
 def text_liveboard(station):
