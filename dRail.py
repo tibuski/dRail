@@ -7,7 +7,7 @@ app = Flask(__name__)
 
 ROOT_URL = "https://api.irail.be/"
 TZ = pytz.timezone('Europe/Brussels')
-TIME_DELTA = 30
+TIME_DELTA = 15
 
 def query_liveboard(station, response_format, lang, alerts, time):
     """
