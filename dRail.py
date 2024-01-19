@@ -8,6 +8,8 @@ app = Flask(__name__)
 ROOT_URL = "https://api.irail.be/"
 TZ = pytz.timezone('Europe/Brussels')
 TIME_DELTA = 15
+DEFAULT_STATION_1 = 'Schaerbeek'
+DEFAULT_STATION_2 = 'Bordet'
 
 def query_liveboard(station, response_format, lang, alerts, time):
     """
@@ -52,7 +54,7 @@ def index():
     if request.method == 'POST':
         liveboard_station = request.form.get('station')
     else:
-        liveboard_station = "Schaerbeek"  # Default station
+        liveboard_station = DEFAULT_STATION_1  # Default station
 
     liveboard_time = datetime.now(TZ) + timedelta(minutes=TIME_DELTA)
     liveboard = query_liveboard(liveboard_station, "json", "en", "true", liveboard_time)
