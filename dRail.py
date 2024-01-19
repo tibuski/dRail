@@ -72,7 +72,7 @@ def text_liveboard(station):
     if liveboard and 'departures' in liveboard and 'departure' in liveboard['departures']:
         departures = liveboard['departures']['departure']
 
-        # Calculate the maximum length for the station column
+        # Calculate the maximum width for the station column
         max_station_length = int(max(len(d['stationinfo']['name']) for d in departures))+6
         platform_length = 8 # Fixed width for platform column
         delay_column_width = 3  # Fixed width for delay column
