@@ -3,15 +3,14 @@ import pytz
 import requests
 from datetime import datetime, timedelta
 
-# For Docker deployment in PRD, change static path
-app = Flask(__name__, static_folder = 'drail/static')
-# app = Flask(__name__, static_folder = 'static')
+app = Flask(__name__)
 
 ROOT_URL = "https://api.irail.be/"
 TZ = pytz.timezone('Europe/Brussels')
 TIME_DELTA = 15
 DEFAULT_STATION_1 = 'Schaerbeek'
 DEFAULT_STATION_2 = 'Bordet'
+CSS_STYLE_PATH= '/drail/static/css/styles.css' # /drail/ needed for PRD behind traefik
 
 def query_liveboard(station, response_format, lang, alerts, time):
     """
@@ -69,10 +68,11 @@ def index():
             station_1=liveboard_station,
             departures_2=returnerd_liveboard_2['departures']['departure'], 
             station_2=DEFAULT_STATION_2,  
-            timedelta=TIME_DELTA
+            timedelta=TIME_DELTA, 
+            css_style=CSS_STYLE_PATH
             )
     else:
-        return render_template('error.html', error=returnerd_liveboard_1)
+        return render_template('error.html', error=returnerd_liveboard_1, css_style=CSS_STYLE_PATH)
   
     
 @app.route('/text/<station>', methods=['GET'])
