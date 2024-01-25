@@ -49,7 +49,7 @@ def format_time(timestamp):
     """
     return datetime.fromtimestamp(int(timestamp), tz=TZ).strftime('%H:%M')
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/drail', methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
         liveboard_station = request.form.get('station')
@@ -71,10 +71,7 @@ def index():
             )
     else:
         return render_template('error.html', error=returnerd_liveboard_1)
-    
-
-
-    
+  
     
 @app.route('/text/<station>', methods=['GET'])
 def text_liveboard(station):
