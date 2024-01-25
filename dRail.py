@@ -3,7 +3,7 @@ import pytz
 import requests
 from datetime import datetime, timedelta
 
-app = Flask(__name__)
+app = Flask(__name__, static_url_path='/static')
 
 ROOT_URL = "https://api.irail.be/"
 TZ = pytz.timezone('Europe/Brussels')
@@ -57,12 +57,24 @@ def index():
         liveboard_station = DEFAULT_STATION_1  # Default station
 
     liveboard_time = datetime.now(TZ) + timedelta(minutes=TIME_DELTA)
-    liveboard = query_liveboard(liveboard_station, "json", "en", "true", liveboard_time)
+    returnerd_liveboard_1 = query_liveboard(liveboard_station, "json", "en", "true", liveboard_time)
+    returnerd_liveboard_2 = query_liveboard(DEFAULT_STATION_2, "json", "en", "true", liveboard_time)
 
-    if type(liveboard) is not requests.exceptions.ConnectionError:
-        return render_template('liveboard.html', departures=liveboard['departures']['departure'], station=liveboard_station, timedelta=TIME_DELTA)
+    if (type(returnerd_liveboard_1) is not requests.exceptions.ConnectionError) or (type(returnerd_liveboard_1) is not requests.exceptions.ConnectionError):
+        return render_template(
+            'liveboard.html', 
+            departures_1=returnerd_liveboard_1['departures']['departure'], 
+            station_1=liveboard_station,
+            departures_2=returnerd_liveboard_2['departures']['departure'], 
+            station_2=DEFAULT_STATION_2,  
+            timedelta=TIME_DELTA
+            )
     else:
-        return render_template('error.html', error=liveboard)
+        return render_template('error.html', error=returnerd_liveboard_1)
+    
+
+
+    
     
 @app.route('/text/<station>', methods=['GET'])
 def text_liveboard(station):
