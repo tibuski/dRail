@@ -13,6 +13,7 @@ RUN pip install -r requirements.txt
 # copy every content from the local file to the image
 COPY dRail.py /app/app.py
 COPY templates /app/templates
+COPY static /app/static
 
 # configure the container to run in an executed manner
 EXPOSE 5000
