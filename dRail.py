@@ -64,9 +64,9 @@ def index():
     if (type(returnerd_liveboard_1) is not requests.exceptions.ConnectionError) or (type(returnerd_liveboard_1) is not requests.exceptions.ConnectionError):
         return render_template(
             'liveboard.html', 
-            departures_1=returnerd_liveboard_1['departures']['departure'], 
+            departures_1=returnerd_liveboard_1['departures']['departure'][:15], 
             station_1=liveboard_station,
-            departures_2=returnerd_liveboard_2['departures']['departure'], 
+            departures_2=returnerd_liveboard_2['departures']['departure'][:15], 
             station_2=DEFAULT_STATION_2,  
             timedelta=TIME_DELTA, 
             css_style=CSS_STYLE_PATH
