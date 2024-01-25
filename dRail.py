@@ -49,7 +49,7 @@ def format_time(timestamp):
     """
     return datetime.fromtimestamp(int(timestamp), tz=TZ).strftime('%H:%M')
 
-@app.route('/drail', methods=['GET', 'POST'])
+@app.route('/', methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
         liveboard_station = request.form.get('station')
