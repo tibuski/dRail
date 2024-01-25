@@ -3,7 +3,9 @@ import pytz
 import requests
 from datetime import datetime, timedelta
 
-app = Flask(__name__)
+# For Docker deployment in PRD, change static path
+app = Flask(__name__, static_folder = 'drail/static')
+# app = Flask(__name__, static_folder = 'static')
 
 ROOT_URL = "https://api.irail.be/"
 TZ = pytz.timezone('Europe/Brussels')
