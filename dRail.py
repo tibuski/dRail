@@ -3,7 +3,7 @@ import pytz
 import requests
 from datetime import datetime, timedelta
 
-app = Flask(__name__, static_url_path='/static')
+app = Flask(__name__)
 
 ROOT_URL = "https://api.irail.be/"
 TZ = pytz.timezone('Europe/Brussels')
