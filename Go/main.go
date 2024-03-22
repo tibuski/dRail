@@ -8,20 +8,25 @@ import (
 	"net/url"
 )
 
-const ROOT_URL string = "https://api.irail.be/liveboard"
-const TIME_DELTA int = 15
-const DEFAULT_STATION_1 string = "Schaerbeek"
-const DEFAULT_STATION_2 string = "Bordet"
+const (
+	ROOT_URL          string = "https://api.irail.be/liveboard"
+	TIME_DELTA        int    = 15
+	DEFAULT_STATION_1 string = "Schaerbeek"
+	DEFAULT_STATION_2 string = "Bordet"
+	RESPONSE_FORMAT   string = "json"
+	RESPONSE_LANG     string = "en"
+	RESPONSE_ALERT    string = "true"
+)
 
-func main() {
+func queryLiveboard(station string, time string) ([]byte, error) {
 
 	resource := "liveboard"
 	params := url.Values{}
-	params.Add("station", DEFAULT_STATION_1)
-	params.Add("format", "json")
-	params.Add("lang", "en")
-	params.Add("alerts", "true")
-	params.Add("time", "1000")
+	params.Add("station", station)
+	params.Add("format", RESPONSE_FORMAT)
+	params.Add("lang", RESPONSE_LANG)
+	params.Add("alerts", RESPONSE_ALERT)
+	params.Add("time", time)
 
 	u, _ := url.ParseRequestURI(ROOT_URL)
 	u.Path = resource
@@ -37,12 +42,19 @@ func main() {
 	}
 	body, err := io.ReadAll(res.Body)
 	res.Body.Close()
-	if res.StatusCode > 299 {
-		log.Fatalf("Response failed with status code: %d and\nbody: %s\n", res.StatusCode, body)
-	}
+
+	return body, err
+
+}
+
+func main() {
+
+	resp, err := queryLiveboard("Soignies", "1600")
+
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Printf("%s", body)
+
+	fmt.Print("%v", []byte(resp))
 
 }
