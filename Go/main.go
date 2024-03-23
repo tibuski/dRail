@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 	"log"
@@ -18,7 +19,57 @@ const (
 	RESPONSE_ALERT    string = "true"
 )
 
-func queryLiveboard(station string, time string) ([]byte, error) {
+type Liveboard struct {
+	Version     string `json:"version"`
+	Timestamp   string `json:"timestamp"`
+	Station     string `json:"station"`
+	Stationinfo struct {
+		LocationX    string `json:"locationX"`
+		LocationY    string `json:"locationY"`
+		ID           string `json:"id"`
+		Name         string `json:"name"`
+		ID0          string `json:"@id"`
+		Standardname string `json:"standardname"`
+	} `json:"stationinfo"`
+	Departures struct {
+		Number    string `json:"number"`
+		Departure []struct {
+			ID          string `json:"id"`
+			Delay       string `json:"delay"`
+			Station     string `json:"station"`
+			Stationinfo struct {
+				LocationX    string `json:"locationX"`
+				LocationY    string `json:"locationY"`
+				ID           string `json:"id"`
+				Name         string `json:"name"`
+				ID0          string `json:"@id"`
+				Standardname string `json:"standardname"`
+			} `json:"stationinfo"`
+			Time        string `json:"time"`
+			Vehicle     string `json:"vehicle"`
+			Vehicleinfo struct {
+				Name      string `json:"name"`
+				Shortname string `json:"shortname"`
+				Number    string `json:"number"`
+				Type      string `json:"type"`
+				LocationX string `json:"locationX"`
+				LocationY string `json:"locationY"`
+				ID        string `json:"@id"`
+			} `json:"vehicleinfo"`
+			Platform     string `json:"platform"`
+			Platforminfo struct {
+				Name   string `json:"name"`
+				Normal string `json:"normal"`
+			} `json:"platforminfo"`
+			Canceled            string `json:"canceled"`
+			Left                string `json:"left"`
+			IsExtra             string `json:"isExtra"`
+			DepartureConnection string `json:"departureConnection"`
+		} `json:"departure"`
+	} `json:"departures"`
+}
+
+func queryLiveboard(station string, time string) (Liveboard, error) {
 
 	resource := "liveboard"
 	params := url.Values{}
@@ -33,28 +84,36 @@ func queryLiveboard(station string, time string) ([]byte, error) {
 	u.RawQuery = params.Encode()
 	urlstr := fmt.Sprintf("%v", u)
 
-	// Debug
-	fmt.Println(urlstr)
+	fmt.Println(urlstr) // Debug
 
-	res, err := http.Get(urlstr)
+	resp, err := http.Get(urlstr)
 	if err != nil {
 		log.Fatal(err)
 	}
-	body, err := io.ReadAll(res.Body)
-	res.Body.Close()
 
-	return body, err
+	body, _ := io.ReadAll(resp.Body)
+	resp.Body.Close()
+
+	var result Liveboard
+
+	err = json.Unmarshal(body, &result)
+
+	if err != nil {
+		fmt.Println("Can not unmarshal JSON")
+	}
+
+	return result, err
 
 }
 
 func main() {
 
-	resp, err := queryLiveboard("Soignies", "1600")
+	result, err := queryLiveboard("Soignies", "1600")
 
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	fmt.Print("%v", []byte(resp))
+	fmt.Println(result.Station)
 
 }
