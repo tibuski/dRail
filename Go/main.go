@@ -112,18 +112,29 @@ func queryLiveboard(station string, timeDelta int) (Liveboard, error) {
 
 func main() {
 
-	station1, err := queryLiveboard(DEFAULT_STATION_1, TIME_DELTA)
+	mux := http.NewServeMux()
+	mux.HandleFunc("GET /drail/", func(w http.ResponseWriter, r *http.Request) {
+		station1, err := queryLiveboard(DEFAULT_STATION_1, TIME_DELTA)
+
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		station2, err := queryLiveboard(DEFAULT_STATION_2, TIME_DELTA)
+
+		if err != nil {
+			log.Fatal(err)
+		}
+		fmt.Println(station1.Station, " : ", station1.Timestamp)
+		fmt.Println(station2.Station, " : ", station2.Timestamp)
+	})
+
+	fmt.Println("Sarting server on http://localhost:8080/drail")
+
+	err := http.ListenAndServe("localhost:8080", mux)
 
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	station2, err := queryLiveboard(DEFAULT_STATION_2, TIME_DELTA)
-
-	if err != nil {
-		log.Fatal(err)
-	}
-	fmt.Println(station1.Station, " : ", station1.Timestamp)
-	fmt.Println(station2.Station, " : ", station2.Timestamp)
 
 }
