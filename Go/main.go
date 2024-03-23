@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"net/url"
+	"time"
 )
 
 const (
@@ -69,7 +70,10 @@ type Liveboard struct {
 	} `json:"departures"`
 }
 
-func queryLiveboard(station string, time string) (Liveboard, error) {
+func queryLiveboard(station string, timeDelta int) (Liveboard, error) {
+
+	now := time.Now()
+	time := now.Add(-time.Minute * time.Duration(timeDelta))
 
 	resource := "liveboard"
 	params := url.Values{}
@@ -77,7 +81,7 @@ func queryLiveboard(station string, time string) (Liveboard, error) {
 	params.Add("format", RESPONSE_FORMAT)
 	params.Add("lang", RESPONSE_LANG)
 	params.Add("alerts", RESPONSE_ALERT)
-	params.Add("time", time)
+	params.Add("time", time.Format("1504"))
 
 	u, _ := url.ParseRequestURI(ROOT_URL)
 	u.Path = resource
@@ -108,12 +112,18 @@ func queryLiveboard(station string, time string) (Liveboard, error) {
 
 func main() {
 
-	result, err := queryLiveboard("Soignies", "1600")
+	station1, err := queryLiveboard(DEFAULT_STATION_1, TIME_DELTA)
 
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	fmt.Println(result.Station)
+	station2, err := queryLiveboard(DEFAULT_STATION_2, TIME_DELTA)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println(station1.Station, " : ", station1.Timestamp)
+	fmt.Println(station2.Station, " : ", station2.Timestamp)
 
 }
