@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"html/template"
 	"io"
 	"log"
 	"net/http"
@@ -110,24 +111,24 @@ func queryLiveboard(station string, timeDelta int) (Liveboard, error) {
 
 }
 
+func rootHandler(w http.ResponseWriter, r *http.Request) {
+	p, err := queryLiveboard(DEFAULT_STATION_1, TIME_DELTA)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	t, err := template.ParseFiles("html/liveboard.html")
+	if err != nil {
+		log.Fatal(err)
+	}
+	t.Execute(w, p)
+}
+
 func main() {
 
 	mux := http.NewServeMux()
-	mux.HandleFunc("GET /drail/", func(w http.ResponseWriter, r *http.Request) {
-		station1, err := queryLiveboard(DEFAULT_STATION_1, TIME_DELTA)
-
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		station2, err := queryLiveboard(DEFAULT_STATION_2, TIME_DELTA)
-
-		if err != nil {
-			log.Fatal(err)
-		}
-		fmt.Println(station1.Station, " : ", station1.Timestamp)
-		fmt.Println(station2.Station, " : ", station2.Timestamp)
-	})
+	mux.HandleFunc("GET /drail/", rootHandler)
+	mux.Handle("/static/", http.FileServer(http.Dir("./html/static")))
 
 	fmt.Println("Sarting server on http://localhost:8080/drail")
 

@@ -1,3 +1,3 @@
-module github.com/tibuski/GodRail
+module github.com/tibuski/dRail
 
 go 1.22.1
