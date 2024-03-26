@@ -117,7 +117,7 @@ func rootHandler(w http.ResponseWriter, r *http.Request) {
 		log.Fatal(err)
 	}
 
-	t, err := template.ParseFiles("html/liveboard.html")
+	t, err := template.ParseFiles("./html/liveboard.html")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -126,15 +126,14 @@ func rootHandler(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 
-	mux := http.NewServeMux()
-	mux.HandleFunc("GET /drail/", rootHandler)
+	fs := http.FileServer(http.Dir("./static"))
+	http.Handle("/static/", http.StripPrefix("/static/", fs))
 
-	fs := http.FileServer(http.Dir("html/static"))
-	mux.Handle("/static/", http.StripPrefix("/static/", fs))
+	http.HandleFunc("/drail/", rootHandler)
 
 	fmt.Println("Sarting server on http://localhost:8080/drail")
 
-	err := http.ListenAndServe("localhost:8080", mux)
+	err := http.ListenAndServe("localhost:8080", nil)
 
 	if err != nil {
 		log.Fatal(err)
