@@ -128,7 +128,9 @@ func main() {
 
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /drail/", rootHandler)
-	mux.Handle("/static/", http.FileServer(http.Dir("./html/static")))
+
+	fs := http.FileServer(http.Dir("html/static"))
+	mux.Handle("/static/", http.StripPrefix("/static/", fs))
 
 	fmt.Println("Sarting server on http://localhost:8080/drail")
 
