@@ -23,6 +23,7 @@ const (
 )
 
 type Liveboard struct {
+	Timedelta   int
 	Version     string `json:"version"`
 	Timestamp   string `json:"timestamp"`
 	Station     string `json:"station"`
@@ -108,6 +109,8 @@ func queryLiveboard(station string, timeDelta int) (Liveboard, error) {
 		fmt.Println("Can not unmarshal JSON")
 	}
 
+	result.Timedelta = TIME_DELTA
+
 	return result, err
 
 }
@@ -119,6 +122,7 @@ func toMinute(x string) int {
 
 func rootHandler(w http.ResponseWriter, r *http.Request) {
 	p, err := queryLiveboard(DEFAULT_STATION_1, TIME_DELTA)
+
 	if err != nil {
 		log.Fatal(err)
 	}
