@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	"net/url"
+	"strconv"
 	"time"
 )
 
@@ -111,26 +112,37 @@ func queryLiveboard(station string, timeDelta int) (Liveboard, error) {
 
 }
 
+func toMinute(x string) int {
+	result, _ := strconv.Atoi(x)
+	return result / 60
+}
+
 func rootHandler(w http.ResponseWriter, r *http.Request) {
 	p, err := queryLiveboard(DEFAULT_STATION_1, TIME_DELTA)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	t, err := template.ParseFiles("./html/liveboard.html")
+	funcMap := template.FuncMap{"toMinute": toMinute}
+	t, err := template.New("").Funcs(funcMap).ParseFiles("html/liveboard.html")
 	if err != nil {
 		log.Fatal(err)
 	}
-	t.Execute(w, p)
+
+	if err := t.ExecuteTemplate(w, "liveboard.html", p); err != nil {
+		log.Fatal(err)
+	}
 }
 
 func main() {
-
-	fs := http.FileServer(http.Dir("./static"))
+	// Static content like css and images
+	fs := http.FileServer(http.Dir("./html/static"))
 	http.Handle("/static/", http.StripPrefix("/static/", fs))
 
+	// HTML Templates on /drail/
 	http.HandleFunc("/drail/", rootHandler)
 
+	// Start Server
 	fmt.Println("Sarting server on http://localhost:8080/drail")
 
 	err := http.ListenAndServe("localhost:8080", nil)

@@ -7,7 +7,61 @@
     <link rel="stylesheet" type="text/css" href="/static/styles.css"> 
 </head>
 <body>
-    <H1>Hello world</H1>
-    {{.Station}}
+    <div class="row">
+        <div class="column">
+            <h2>Departures from <span style="color:yellow">{{ .Station }}</span> in the next <span style="color:yellow">{{ .Timestamp }}</span> minutes</h2>
+            <table>
+                <tr>
+                    <th>Time (Delay)</th>
+                    <th>Station</th>
+                    <th>Platform</th>
+                </tr>
+                {{ range .Departures.Departure }}                
+                <tr>
+                    <td class="time">
+                        {{ if eq .Canceled "0" }} 
+                        {{ .Time }}
+                        {{ else }}
+                        <span class="cancelled"> {{ .Time }} </span>
+                        {{ end }}
+                            {{ if gt .Delay "0" }}  
+                            (<span style="color:red">+{{ .Delay | toMinute }}</span>)
+                            {{ end }}
+
+                    </td>
+                    <td class="stations">
+                        {{ if eq .Canceled "0" }} 
+                        {{ .Station }}
+                        {{ else }}
+                        <span class="cancelled"> {{ .Station }} </span>
+                        {{ end }}
+                    </td>
+                    <td class="platform">
+                        {{ if eq .Canceled "0" }} 
+                        {{ .Platform }}
+                        {{ else }}
+                        <span style="color:red">Cancelled</span>
+                        {{ end }}
+                    </td>
+                    {{ end }}
+                </tr>
+
+            </table>
+        </div>
+    
+        <div class="column">
+     
+        </div>
+    </div>
+    
+    <div class="footer">
+        <form action="" method="post">
+            <label for="station">Select other Station:</label>
+            <input type="text" id="station" name="station" placeholder="Station name">
+            <input type="submit" value="Get Departures">
+        </form>
+    </div>
+
 </body>
 </html>
+    
