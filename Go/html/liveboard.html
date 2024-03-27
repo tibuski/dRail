@@ -20,9 +20,9 @@
                 <tr>
                     <td class="time">
                         {{ if eq .Canceled "0" }} 
-                        {{ .Time }}
+                        {{ .Time | toHHmm }}
                         {{ else }}
-                        <span class="cancelled"> {{ .Time }} </span>
+                        <span class="cancelled"> {{ .Time | toHHmm }} </span>
                         {{ end }}
                             {{ if gt .Delay "0" }}  
                             (<span style="color:red">+{{ .Delay | toMinute }}</span>)

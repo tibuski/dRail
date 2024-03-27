@@ -120,6 +120,15 @@ func toMinute(x string) int {
 	return result / 60
 }
 
+func toHHmm(timestamp string) string {
+	t64, _ := strconv.ParseInt(timestamp, 10, 64)
+	// Add 1h
+	t64 = t64 + 3600
+	t := time.Unix(t64, 0).UTC()
+	return t.Format("15:04")
+
+}
+
 func rootHandler(w http.ResponseWriter, r *http.Request) {
 	p, err := queryLiveboard(DEFAULT_STATION_1, TIME_DELTA)
 
@@ -127,7 +136,7 @@ func rootHandler(w http.ResponseWriter, r *http.Request) {
 		log.Fatal(err)
 	}
 
-	funcMap := template.FuncMap{"toMinute": toMinute}
+	funcMap := template.FuncMap{"toMinute": toMinute, "toHHmm": toHHmm}
 	t, err := template.New("").Funcs(funcMap).ParseFiles("html/liveboard.html")
 	if err != nil {
 		log.Fatal(err)
