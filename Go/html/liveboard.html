@@ -8,6 +8,7 @@
 </head>
 <body>
     <div class="row">
+        {{ range . }}
         <div class="column">
             <h2>Departures from <span style="color:yellow">{{ .Station }}</span> in the next <span style="color:yellow">{{ .Timedelta }}</span> minutes</h2>
             <table>
@@ -48,10 +49,8 @@
 
             </table>
         </div>
-    
-        <div class="column">
-     
-        </div>
+        {{ end }}    
+      
     </div>
     
     <div class="footer">

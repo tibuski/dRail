@@ -130,11 +130,21 @@ func toHHmm(timestamp string) string {
 }
 
 func rootHandler(w http.ResponseWriter, r *http.Request) {
-	p, err := queryLiveboard(DEFAULT_STATION_1, TIME_DELTA)
 
+	stationsMap := []Liveboard{}
+
+	station1, err := queryLiveboard(DEFAULT_STATION_1, TIME_DELTA)
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	station2, err := queryLiveboard(DEFAULT_STATION_2, TIME_DELTA)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	stationsMap = append(stationsMap, station1)
+	stationsMap = append(stationsMap, station2)
 
 	funcMap := template.FuncMap{"toMinute": toMinute, "toHHmm": toHHmm}
 	t, err := template.New("").Funcs(funcMap).ParseFiles("html/liveboard.html")
@@ -142,7 +152,7 @@ func rootHandler(w http.ResponseWriter, r *http.Request) {
 		log.Fatal(err)
 	}
 
-	if err := t.ExecuteTemplate(w, "liveboard.html", p); err != nil {
+	if err := t.ExecuteTemplate(w, "liveboard.html", stationsMap); err != nil {
 		log.Fatal(err)
 	}
 }
