@@ -73,6 +73,21 @@ type Liveboard struct {
 	} `json:"departures"`
 }
 
+// Template Functions
+func toMinute(x string) int {
+	result, _ := strconv.Atoi(x)
+	return result / 60
+}
+
+func toHHmm(timestamp string) string {
+	t64, _ := strconv.ParseInt(timestamp, 10, 64)
+	// Add 1h
+	t64 = t64 + 3600
+	t := time.Unix(t64, 0).UTC()
+	return t.Format("15:04")
+}
+
+// Query Liveboard on api.irail.be
 func queryLiveboard(station string, timeDelta int) (Liveboard, error) {
 
 	now := time.Now()
@@ -115,20 +130,7 @@ func queryLiveboard(station string, timeDelta int) (Liveboard, error) {
 
 }
 
-func toMinute(x string) int {
-	result, _ := strconv.Atoi(x)
-	return result / 60
-}
-
-func toHHmm(timestamp string) string {
-	t64, _ := strconv.ParseInt(timestamp, 10, 64)
-	// Add 1h
-	t64 = t64 + 3600
-	t := time.Unix(t64, 0).UTC()
-	return t.Format("15:04")
-
-}
-
+// Handle "/drail/ root url"
 func rootHandler(w http.ResponseWriter, r *http.Request) {
 
 	stationsMap := []Liveboard{}
